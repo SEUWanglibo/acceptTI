@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>acceptTI 科研人格测试</title>
+  <style>
+    :root {
+      --bg: #f6f7fa;
+      --panel: #ffffff;
+      --text: #1a1f2e;
+      --muted: #5a6070;
+      --line: #d1d5e0;
+      --soft: #eef0f5;
+      --accent: #5b6b8c;
+      --accent-strong: #3d4a66;
+      --shadow: 0 16px 40px rgba(45, 55, 80, 0.08);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at top left, #f9fafc 0, #f6f7fa 36%, #f1f3f7 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .shell {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px 16px 56px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 28px;
+      margin-top: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -60px;
+      top: -60px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, rgba(91, 107, 140, 0.18), rgba(91, 107, 140, 0.02));
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--accent-strong);
+      border: 1px solid var(--line);
+      background: var(--soft);
+      border-radius: 999px;
+      padding: 8px 12px;
+      margin-bottom: 16px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 52px);
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      max-width: 680px;
+    }
+    .hero .sub {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.75;
+      max-width: 720px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 0.9fr;
+      gap: 18px;
+      align-items: stretch;
+      margin-top: 24px;
+    }
+
+    .mini-panel {
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #fbfcfe, #f3f5f8);
+    }
+
+    .mini-panel h3 {
+      font-size: 15px;
+      margin-bottom: 10px;
+    }
+
+    .mini-panel ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+        .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+    .hero-minimal {
+      min-height: 48vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 42px 20px;
+    }
+    .hero-minimal::after { display: none; }
+    .hero-minimal h1 {
+      max-width: none;
+      margin: 0;
+    }
+    .hero-actions-single {
+      justify-content: center;
+      margin-top: 28px;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      transition: transform .16s ease, box-shadow .16s ease, opacity .16s ease;
+      font: inherit;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
+
+    .btn-primary {
+      background: var(--accent-strong);
+      color: #fff;
+      padding: 14px 20px;
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(61, 74, 102, 0.18);
+      font-weight: 700;
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: var(--accent-strong);
+      padding: 14px 20px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      font-weight: 700;
+    }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .test-wrap,
+    .result-wrap {
+      margin-top: 22px;
+      padding: 22px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .progress {
+      flex: 1;
+      min-width: 240px;
+      height: 10px;
+      background: #eef0f5;
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress > span {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, #7a8bad, #4d5a75);
+      border-radius: inherit;
+      transition: width .22s ease;
+    }
+
+    .progress-text {
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .question-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .question {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(180deg, #ffffff, #fbfcfe);
+    }
+
+    .question-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+    }
+
+    .question-title {
+      font-size: 16px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #fff;
+      transition: border-color .16s ease, background .16s ease, transform .16s ease;
+    }
+
+    .option:hover {
+      border-color: #c5cbd6;
+      background: #f9fafc;
+    }
+
+    .option input {
+      margin-top: 3px;
+      accent-color: var(--accent-strong);
+      transform: scale(1.1);
+      flex-shrink: 0;
+    }
+
+    .option-code {
+      font-weight: 800;
+      color: var(--accent-strong);
+      min-width: 22px;
+    }
+
+    .actions-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+      padding-top: 6px;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .result-hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .type-box,
+    .score-box,
+    .dim-box,
+    .top3-box,
+    .about-box {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(180deg, #ffffff, #fbfcfe);
+    }
+
+    .type-kicker {
+      font-size: 12px;
+      color: var(--accent-strong);
+      margin-bottom: 8px;
+      letter-spacing: .05em;
+    }
+
+    .type-name {
+      font-size: clamp(30px, 5vw, 48px);
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+    }
+
+    .type-subname {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .match {
+      margin-top: 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      color: var(--accent-strong);
+      font-weight: 700;
+    }
+
+    .type-desc {
+      margin-top: 18px;
+      line-height: 1.85;
+      font-size: 15px;
+      color: #2a3040;
+    }
+
+    .score-box h3,
+    .dim-box h3,
+    .top3-box h3,
+    .about-box h3 {
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .score-item {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .score-item .k {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .score-item .v {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--accent-strong);
+    }
+
+    .dim-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .dim-pill {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .dim-pill .label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .dim-pill .value {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--accent-strong);
+    }
+
+    .top3-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .top3-item {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      background: #fff;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .top3-item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .top3-item span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .top3-score {
+      color: var(--accent-strong);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .about-box p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+
+    .result-layout {
+      display: grid;
+      gap: 18px;
+    }
+    .result-top {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+    .poster-box, .type-box, .analysis-box, .dim-box, .note-box {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(180deg, #ffffff, #fbfcfe);
+    }
+        .poster-box {
+      display: grid;
+      grid-template-rows: 1fr auto;
+      min-height: 280px;
+      overflow: hidden;
+      position: relative;
+      background:
+        radial-gradient(circle at top right, rgba(91,107,140,0.16), rgba(91,107,140,0) 40%),
+        linear-gradient(180deg, #ffffff, #f7f9fc);
+    }
+    .poster-box::after {
+      content: "";
+      position: absolute;
+      right: -46px;
+      bottom: -46px;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, rgba(91,107,140,0.12), rgba(91,107,140,0.01));
+      pointer-events: none;
+    }
+    .poster-image {
+      width: 100%;
+      min-height: 220px;
+      max-height: 460px;
+      object-fit: contain;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.75);
+      position: relative;
+      z-index: 1;
+    }
+    .poster-box.no-image .poster-image {
+      display: none;
+    }
+    .poster-caption {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+      position: relative;
+      z-index: 1;
+    }
+    .type-kicker {
+      font-size: 12px;
+      color: var(--accent-strong);
+      margin-bottom: 8px;
+      letter-spacing: .06em;
+    }
+    .type-name {
+      font-size: clamp(30px, 5vw, 48px);
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+    }
+    .type-subname {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .match {
+      margin-top: 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      color: var(--accent-strong);
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .analysis-box h3, .dim-box h3, .note-box h3 {
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+    .result-actions {
+      margin-top: 22px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .analysis-box p {
+      margin: 0;
+      color: #2a3040;
+      font-size: 15px;
+      line-height: 1.9;
+      white-space: pre-wrap;
+    }
+    .dim-list {
+      display: grid;
+      gap: 12px;
+    }
+    .dim-item {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: #fff;
+    }
+    .dim-item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .dim-item-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .dim-item-score {
+      color: var(--accent-strong);
+      font-weight: 800;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .dim-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .note-box p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .author-box {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(180deg, #ffffff, #fbfcfe);
+      overflow: hidden;
+    }
+    .author-box summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 18px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .author-box summary::-webkit-details-marker { display: none; }
+    .author-box summary::after {
+      content: '展开';
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-strong);
+      border: 1px solid var(--line);
+      background: var(--soft);
+      padding: 6px 10px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+    .author-box[open] summary::after {
+      content: '收起';
+    }
+    .author-content {
+      border-top: 1px solid var(--line);
+      padding: 0 18px 18px;
+    }
+    .author-content p {
+      margin: 14px 0 0;
+      color: #2a3040;
+      font-size: 14px;
+      line-height: 1.9;
+    }
+
+    .result-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+    @media (max-width: 860px) {
+      .result-top { grid-template-columns: 1fr; }
+    }
+
+@media (max-width: 860px) {
+      .hero-grid,
+      .result-hero {
+        grid-template-columns: 1fr;
+      }
+      .dim-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 600px) {
+      .shell { padding: 14px 12px 42px; }
+      .hero, .test-wrap, .result-wrap { padding: 16px; }
+      .hero h1 { font-size: 32px; }
+      .question-title { font-size: 15px; }
+      .dim-grid,
+      .score-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section id="intro" class="screen active">
+      <div class="hero card hero-minimal">
+        <div class="eyebrow">Academic Character Research Type Indicator</div>
+        <h1>acceptTI 科研人格测试</h1>
+        <div class="hero-actions hero-actions-single">
+          <button id="startBtn" class="btn-primary">开始测试</button>
+        </div>
+        <div style="padding-top: 2rem; display: flex; flex-direction: column; gap: 8px; color: var(--muted); font-size: 13px;">
+          <span>MBTI已经过时，acceptTI来了</span>
+          <span>31道题，测出你的科研人格</span>
+          <span>你不是一个人，你只是还没找到组织</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="test" class="screen">
+      <div class="test-wrap card">
+        <div class="topbar">
+          <div class="progress"><span id="progressBar"></span></div>
+          <div class="progress-text" id="progressText">0 / 31</div>
+        </div>
+
+        <div id="questionList" class="question-list"></div>
+
+        <div class="actions-bottom">
+          <div class="hint" id="testHint">全选完才会放行。实验可以不做，测试必须做完。</div>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <button id="backIntroBtn" class="btn-secondary">返回首页</button>
+            <button id="submitBtn" class="btn-primary" disabled>提交并查看结果</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section id="result" class="screen">
+      <div class="result-wrap card">
+        <div class="result-layout">
+          <div class="result-top">
+            <div class="poster-box" id="posterBox">
+              <img id="posterImage" class="poster-image" alt="人格结果图" />
+              <div id="posterCaption" class="poster-caption"></div>
+            </div>
+
+            <div class="type-box">
+              <div class="type-kicker" id="resultModeKicker">你的主类型</div>
+              <div class="type-name" id="resultTypeName"></div>
+              <div class="match" id="matchBadge">匹配度 92%</div>
+              <div class="type-subname" id="resultTypeSub">系统备注会显示在这里。</div>
+            </div>
+          </div>
+
+          <div class="analysis-box">
+            <h3>该人格的简单解读</h3>
+            <p id="resultDesc"></p>
+          </div>
+
+          <div class="dim-box">
+            <h3>十五维度评分</h3>
+            <div id="dimList" class="dim-list"></div>
+          </div>
+
+          <div class="note-box">
+            <h3>友情提示</h3>
+            <p id="funNote">本测试仅供娱乐，别拿它当申博、评职称、找教职或分手的依据。</p>
+          </div>
+
+                    <details class="author-box">
+            <summary>作者的话</summary>
+            <div class="author-content">
+              <p>本测试基于 SBTI 人格测试改编，专为科研从业者设计。</p>
+              <p>科研路上，你不是一个人。无论你是学术难民、数据奴隶，还是控制狂魔，都有一群人和你一样，在拒稿和accept之间反复横跳。</p>
+              <p>请记住：这只是一个娱乐测试，你的人生价值不由影响因子定义。</p>
+              <p>如果你测出来是 OVERNIGHT（通宵战神），请立刻去睡觉。</p>
+            </div>
+          </details>
+        </div>
+
+        <div class="result-actions">
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <button id="restartBtn" class="btn-secondary">重新测试</button>
+            <button id="toTopBtn" class="btn-primary">回到首页</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+
+  <script>
+    // ===== acceptTI 科研人格测试 - 数据定义 =====
+    
+    const dimensionMeta = {
+      S1: { name: 'S1 学术自信', model: '科研自我认知' },
+      S2: { name: 'S2 方向清晰度', model: '科研自我认知' },
+      S3: { name: 'S3 成果焦虑', model: '科研自我认知' },
+      E1: { name: 'E1 拒稿韧性', model: '科研情绪调节' },
+      E2: { name: 'E2 同辈焦虑', model: '科研情绪调节' },
+      E3: { name: 'E3 Deadline压力', model: '科研情绪调节' },
+      A1: { name: 'A1 求真vs求快', model: '学术价值取向' },
+      A2: { name: 'A2 规则灵活度', model: '学术价值取向' },
+      A3: { name: 'A3 科研意义感', model: '学术价值取向' },
+      Ac1: { name: 'Ac1 动机导向', model: '学术执行风格' },
+      Ac2: { name: 'Ac2 决策风格', model: '学术执行风格' },
+      Ac3: { name: 'Ac3 执行模式', model: '学术执行风格' },
+      So1: { name: 'So1 会议社交', model: '学术人际关系' },
+      So2: { name: 'So2 合作边界', model: '学术人际关系' },
+      So3: { name: 'So3 导师沟通', model: '学术人际关系' }
+    };
+
+    const questions = [
+      { id: 'q1', dim: 'S1', text: '看到同实验室的人发了顶刊，你会？', options: [{ label: '我是废物', value: 1 }, { label: '有点羡慕但还好', value: 2 }, { label: '他行我也行', value: 3 }] },
+      { id: 'q2', dim: 'S1', text: '导师夸你的进展，你会？', options: [{ label: '一定是在画饼/他搞错了', value: 1 }, { label: '谦虚一下', value: 2 }, { label: '没错，我就是天才', value: 3 }] },
+      { id: 'q3', dim: 'S2', text: '你对未来五年的规划是？', options: [{ label: '活过今天就行', value: 1 }, { label: '有个大概方向', value: 2 }, { label: '精确到每个月的里程碑', value: 3 }] },
+      { id: 'q4', dim: 'S2', text: '如果明天实验室关门，你会？', options: [{ label: '太好了终于可以休息了', value: 1 }, { label: '有点慌但还能调整', value: 2 }, { label: '立刻找下家，不能断', value: 3 }] },
+      { id: 'q5', dim: 'S3', text: '你已经多久没有paper了？', options: [{ label: 'paper是什么？', value: 1 }, { label: '几个月吧，还好', value: 2 }, { label: '超过三个月没accept我就要疯了', value: 3 }] },
+      { id: 'q6', dim: 'S3', text: '周末你在想什么？', options: [{ label: '玩什么游戏', value: 1 }, { label: '工作和休息之间摇摆', value: 2 }, { label: '那个figure3还能再优化一下', value: 3 }] },
+      { id: 'q7', dim: 'E1', text: '收到"Reject"邮件，你会？', options: [{ label: '当场emo一周', value: 1 }, { label: '难过但明天改投', value: 2 }, { label: '审稿人懂个屁，直接转投', value: 3 }] },
+      { id: 'q8', dim: 'E1', text: '被拒稿三次后，你会？', options: [{ label: '怀疑人生，考虑转行', value: 1 }, { label: '再改改试试', value: 2 }, { label: '一定是期刊档次不对', value: 3 }] },
+      { id: 'q9', dim: 'E2', text: '室友发Nature了，你在朋友圈看到，你会？', options: [{ label: '点个赞，恭喜', value: 1 }, { label: '默默焦虑', value: 2 }, { label: '立刻打开overleaf开始写', value: 3 }] },
+      { id: 'q10', dim: 'E2', text: '组会上听说师弟要发顶刊了，你会？', options: [{ label: '关我屁事', value: 1 }, { label: '有点压力', value: 2 }, { label: '整晚睡不着觉', value: 3 }] },
+      { id: 'q11', dim: 'E3', text: 'DDL前一周，你的状态是？', options: [{ label: '已经开始失眠', value: 1 }, { label: '有点紧张但还行', value: 2 }, { label: '早就写完了', value: 3 }] },
+      { id: 'q12', dim: 'E3', text: '如果DDL延后一周，你会？', options: [{ label: '太好了再躺一周', value: 1 }, { label: '稍微优化一下', value: 2 }, { label: '不解，为什么要延后？', value: 3 }] },
+      { id: 'q13', dim: 'A1', text: '发现一个可能有问题的数据，但不太明显，你会？', options: [{ label: '先投了再说', value: 1 }, { label: '检查一下，不太影响就投', value: 2 }, { label: '必须重新跑完所有数据', value: 3 }] },
+      { id: 'q14', dim: 'A1', text: '审稿人说你方法有缺陷，但结果是好的，你会？', options: [{ label: '改改措辞糊弄过去', value: 1 }, { label: '补一些实验但不过分', value: 2 }, { label: '完全重做，必须完美', value: 3 }] },
+      { id: 'q15', dim: 'A2', text: '导师要求按A方法做，但你觉得B方法更好，你会？', options: [{ label: '偷偷按B做', value: 1 }, { label: '先跟导师讨论', value: 2 }, { label: '按A做，导师说的都对', value: 3 }] },
+      { id: 'q16', dim: 'A2', text: '实验protocol要求严格，你会？', options: [{ label: '差不多就行', value: 1 }, { label: '大体遵守，偶尔变通', value: 2 }, { label: '严格按照protocol，偏差0.1都不行', value: 3 }] },
+      { id: 'q17', dim: 'A3', text: '你觉得科研的意义是？', options: [{ label: '混口饭吃', value: 1 }, { label: '有时候觉得有意义，有时候觉得无聊', value: 2 }, { label: '为了人类知识的边界！为了真理！', value: 3 }] },
+      { id: 'q18', dim: 'A3', text: '如果明天中彩票500万，你还会做科研吗？', options: [{ label: '立刻退学', value: 1 }, { label: '可能还是会做一点', value: 2 }, { label: '科研是使命，跟钱无关', value: 3 }] },
+      { id: 'q19', dim: 'Ac1', text: '你投稿主要追求？', options: [{ label: '别reject就行', value: 1 }, { label: '能发就行，不求顶刊', value: 2 }, { label: '必须顶刊，其他都是垃圾', value: 3 }] },
+      { id: 'q20', dim: 'Ac1', text: '面对失败，你会？', options: [{ label: '避免再失败，保守策略', value: 1 }, { label: '平衡风险和收益', value: 2 }, { label: '失败是成功之母，继续冲', value: 3 }] },
+      { id: 'q21', dim: 'Ac2', text: '选择研究方向时，你会？', options: [{ label: '想了半年还没决定', value: 1 }, { label: '调研一两周后决定', value: 2 }, { label: '看一眼就知道行不行', value: 3 }] },
+      { id: 'q22', dim: 'Ac2', text: '老板让你选一个课题，你会？', options: [{ label: '都要，我全都要', value: 1 }, { label: '选一个，但会犹豫', value: 2 }, { label: '快速分析后选最优', value: 3 }] },
+      { id: 'q23', dim: 'Ac3', text: '你的日常工作效率？', options: [{ label: 'DDL前48小时爆发', value: 1 }, { label: '有时高效有时摸鱼', value: 2 }, { label: '每天稳定输出', value: 3 }] },
+      { id: 'q24', dim: 'Ac3', text: '你每天的实际工作时间？', options: [{ label: '有效2小时', value: 1 }, { label: '6-8小时', value: 2 }, { label: '12小时以上', value: 3 }] },
+      { id: 'q25', dim: 'So1', text: '学术会议coffee break，你会？', options: [{ label: '躲在角落看手机', value: 1 }, { label: '有人来聊就聊', value: 2 }, { label: '主动搭讪大佬', value: 3 }] },
+      { id: 'q26', dim: 'So1', text: '收到会议邀请函，你会？', options: [{ label: '找理由不去', value: 1 }, { label: '看情况，不太想去', value: 2 }, { label: '立刻准备名片和电梯演讲', value: 3 }] },
+      { id: 'q27', dim: 'So2', text: '合作写论文，关于author list，你会？', options: [{ label: '随便加，大家都是朋友', value: 1 }, { label: '按贡献来，但可以商量', value: 2 }, { label: '必须算清楚，别想占我便宜', value: 3 }] },
+      { id: 'q28', dim: 'So2', text: '有人想挂你名字（但没做什么），你会？', options: [{ label: '好啊，多个朋友多条路', value: 1 }, { label: '看关系，偶尔可以', value: 2 }, { label: '不可能，我的name不能乱挂', value: 3 }] },
+      { id: 'q29', dim: 'So3', text: '导师说你的方法有问题，但你觉得没问题，你会？', options: [{ label: '好的老板，我改', value: 1 }, { label: '尝试解释，但最终还是听老板的', value: 2 }, { label: '拿出数据证明我是对的', value: 3 }] },
+      { id: 'q30', dim: 'So3', text: '组会上发现老板理解错了文献，你会？', options: [{ label: '沉默，老板说的都对', value: 1 }, { label: '私下委婉提醒', value: 2 }, { label: '当场指出', value: 3 }] }
+    ];
+
+    const specialQuestions = [
+      { id: 'overnight_gate_q1', special: true, kind: 'overnight_gate', text: '你平时熬夜做实验/写论文吗？', options: [{ label: '从不，作息规律', value: 1 }, { label: '偶尔熬夜', value: 2 }, { label: '经常熬夜', value: 3 }] },
+      { id: 'overnight_gate_q2', special: true, kind: 'overnight_trigger', text: '你一般熬到几点？', options: [{ label: '凌晨1-2点', value: 1 }, { label: '凌晨3-4点', value: 2 }, { label: '通宵，直接等日出', value: 3 }] }
+    ];
+
+    const TYPE_LIBRARY = {
+      "PHD": { "code": "PHD", "cn": "学术难民", "intro": "签证要过期了，论文还没accept", "desc": "你的日常是：早上被导师消息吓醒，中午靠咖啡续命，晚上盯着拒稿邮件发呆。你已经忘了当初为什么想读博，现在唯一的动力是'沉没成本太高了'。别人问你'什么时候毕业'，你说'快了'——这个'快了'已经说了三年。" },
+      "POST": { "code": "POST", "cn": "博后流浪汉", "intro": "三年又三年，下一个站在哪", "desc": "你是一个没有故乡的学术游牧民族。合同签了又签，城市换了又换，实验室搬了又搬。每次签合同都在想'这次该稳定了吧'，但每次都在更新LinkedIn。你有丰富的启动资金申请经验，却从未真正启动。" },
+      "TENURE": { "code": "TENURE", "cn": "终身咸鱼", "intro": "已拿铁饭碗，但是碗是漏的", "desc": "恭喜，你拿到了终身教职！坏消息是：基金还是要申，学生还是要带，行政任务堆积如山。你以为拿到tenure可以躺平，结果发现只是换了一种姿势卷。你的研究兴趣已经被评审意见磨平了棱角。" },
+      "AP": { "code": "AP", "cn": "助理教授", "intro": "非升即走，每天都在走钢丝", "desc": "你是学术界的极限运动爱好者。每五年签一次生死状，每年考核一次KPI。你同时在进行五个项目、写三个本子、带八个学生、教两门课，还要假装一切都很好。你的发际线比你的论文引用上升得更快。" },
+      "MASTER": { "code": "MASTER", "cn": "硕士混子", "intro": "能毕业就行，别的无所谓", "desc": "你进实验室的时候雄心壮志，三个月后发现科研不是人干的。你的目标从'发顶刊'降级到'能毕业'，再降级到'导师别骂我'。你每天的有效工作时间不超过两小时，剩下时间都在思考'要不要考公'。" },
+      "UG": { "code": "UG", "cn": "本科科研炮灰", "intro": "进实验室的时候雄心壮志...", "desc": "你是实验室的免费劳动力。你以为能发SCI，实际在洗试管。你以为能学技术，实际在帮师兄师姐打杂。你的梦想是'用本科论文申PhD全奖'，现实是'能不被踢出实验室就不错了'。" },
+      "GHOST": { "code": "GHOST", "cn": "实验室幽灵", "intro": "每天都在，但没人知道我在干嘛", "desc": "你有自己的座位，但工位永远整洁如新（因为不用）。你偶尔会出现在组会上，但从不发言。你的名字在实验室名单上，但没人能说出你在做什么。你可能已经毕业三年了，也可能从未入学——没人记得清。" },
+      "CTRL": { "code": "CTRL", "cn": "控制狂魔", "intro": "你的实验记录本，我要逐字检查", "desc": "你对实验室有着近乎偏执的掌控欲。每个protocol必须经过你审核，每个数据必须按你的格式，每个学生的周报必须准时提交。你以为自己是完美主义者，其实你只是受不了任何失控。你的学生在背后叫你'微管理大师'。" },
+      "PAPER": { "code": "PAPER", "cn": "论文永动机", "intro": "reject是常态，submit才是生活", "desc": "你的Overleaf永远开着五个tab。一篇刚投出去，下一篇已经在写。你对拒稿已经免疫，甚至能从审稿意见中读出幽默感。你的目标是一年十篇，目前进度：九篇under review，一篇in preparation。但你不会停，因为停下来就会思考'这一切有什么意义'。" },
+      "DATA": { "code": "DATA", "cn": "数据奴隶", "intro": "跑了一周，发现原始数据错了", "desc": "你的一天：早上8点打开服务器，晚上12点还在等模型收敛。你梦见自己变成了Excel表格，被VLOOKUP来VLOOKUP去。你最熟悉的是报错信息，最陌生的是'success'。你的心理健康状况与p-value成反比。" },
+      "GRANT": { "code": "GRANT", "cn": "本子乞丐", "intro": "每年这个时候都在求国家给钱", "desc": "你的一年分为两个阶段：写本子的三个月和等结果的九个月。你对'创新点'三个字有PTSD，能把任何一个微小改动包装成'颠覆性突破'。你的写作能力是 funding statement 级别的，你的实际研究是 pilot study 水平的。" },
+      "IDEA": { "code": "IDEA", "cn": "点子批发商", "intro": "idea很多，能做的一个没有", "desc": "你的笔记本里记满了'可以改变世界'的想法。你跟每个人分享这些idea，但从不自己动手。三年后你发现，当初那个'不成熟'的idea被别人发了Nature。你安慰自己说'我眼光不错'，然后继续想下一个idea。" },
+      "CTRLV": { "code": "CTRLV", "cn": "学术裁缝", "intro": "这缝缝，那补补，又一篇", "desc": "你是学术界的fast fashion。Introduction抄A，Method学B，Results改C，Discussion缝合DEFG。查重率？不存在的，你有降重神器。创新点？每篇都'首次将X应用于Y'。你的发表量让同期沉默，直到有人想复现你的结果。" },
+      "READ": { "code": "READ", "cn": "文献收藏家", "intro": "Zotero里3000篇，看过的30篇", "desc": "你的文献管理软件里有精心分类的文件夹，但99%是unread。你享受'添加文献'的快感，但逃避'阅读文献'的责任。每次组会前狂补文献，然后自信满满地说'这个方向我很熟'——其实只看了abstract。" },
+      "CODE": { "code": "CODE", "cn": "调参炼丹师", "intro": "这个learning rate不行，再试试", "desc": "你的日常工作：改参数、跑实验、看结果、再改参数。你对超参数的敏感度超过了对理论的敏感度。你能把准确率从87%调到87.1%，然后写一整页ablation study。你相信只要参数量够大，什么问题都能解决——包括你的毕业问题。" },
+      "PPT": { "code": "PPT", "cn": "汇报表演艺术家", "intro": "图要好看，故事要圆，数据不重要", "desc": "你深谙学术汇报的精髓：好看的配色、流畅的动画、精心设计的悬念。你的slide永远是最专业的，但内容往往是最空洞的。你能在没有结果的情况下讲20分钟，让听众觉得'好像很有道理'。你的艺术造诣超过了你的科研水平。" },
+      "BOSS": { "code": "BOSS", "cn": "老板心腹", "intro": "老板说的都对，老板永远正确", "desc": "你是导师的'得意门生'——至少在导师面前是这样。你从不质疑老板的决定，总是第一个响应号召，永远站在老板角度思考问题。你的学术独立性为零，但职场生存指数满分。你不知道自己在研究什么，但你知道老板想要什么。" },
+      "SOLO": { "code": "SOLO", "cn": "学术独狼", "intro": "合作？不存在的，都是拖累", "desc": "你相信真正的科研只能一个人做。合作写论文？太慢。讨论idea？会被偷。你的通讯作者永远只有自己。你的效率确实高，但你错过了合作带来的cross-fertilization。你的引用数是你的独立宣言数量的两倍。" },
+      "NET": { "code": "NET", "cn": "社交蝴蝶", "intro": "coffee break比我实验还重要", "desc": "你出现在每一个学术社交场合。你知道谁和谁有矛盾，谁的funding快用完了，谁正在找工作。你的信息量比你的论文引用更有价值。你很少做实验，但总能出现在author list上。你相信networking就是productivity。" },
+      "REVIEW": { "code": "REVIEW", "cn": "匿名恶毒侠", "intro": "reject with prejudice，心情好点了", "desc": "你把审稿当成情绪发泄的渠道。你享受那种'掌握别人命运'的权力感。你的审稿意见总是最长、最苛刻、最模棱两可。你建议reject的文章往往在你自己的work cited里。你声称是为了'维护学术标准'，其实只是想让别人也尝尝被拒的滋味。" },
+      "COAUTH": { "code": "COAUTH", "cn": "挂名狂魔", "intro": "通讯作者？给我加上，我认识主编", "desc": "你对author list有着敏锐的嗅觉。任何可能沾边的项目你都想加名。你的策略是：先挂名，再慢慢搞清楚这个项目是做什么的。你的论文数量让你看起来像个大佬，直到有人问你具体内容。" },
+      "DEAD": { "code": "DEAD", "cn": "学术尸体", "intro": "心如死灰，但还在投简历", "desc": "你已经对科研失去了所有热情，但惯性让你继续每天来实验室。你不再相信任何学术理想，但也不知道还能干什么。你的眼神是空洞的，你的实验是机械的，你的存在是薛定谔的——既活着又死了。你还在投论文，只是因为你不知道该做什么。" },
+      "HOPE": { "code": "HOPE", "cn": "盲目乐观者", "intro": "这篇肯定中，上次也是这么说的", "desc": "你有着惊人的心理韧性——或者说，惊人的自我欺骗能力。每次投出去都信心满满'这次肯定中'，每次被拒都'下次肯定中'。你的乐观感染着周围的人，虽然你的预测准确率是0%。但没关系，你已经提交了下一篇。" },
+      "FOMO": { "code": "FOMO", "cn": "同辈焦虑症患者", "intro": "他发Nature了，我还在改introduction", "desc": "你的Twitter/X timeline是你的焦虑放大器。每看到有人发新论文、拿奖、找教职，你就陷入新一轮自我怀疑。你不断刷新arXiv和Google Scholar，生怕错过任何新进展。你的生活被'别人在做什么'支配，而不是'我要做什么'。" },
+      "BURN": { "code": "BURN", "cn": "燃尽综合征", "intro": "曾经热爱，现在只想睡觉", "desc": "你曾经是那个'为了科研可以放弃一切'的人。你通宵、周末加班、假期也工作。然后有一天，你发现自己起床都困难。你对一切都失去了兴趣，包括你曾经的research passion。你的身体还在实验室，灵魂早已辞职。" },
+      "HHHH": { "code": "HHHH", "cn": "科研傻乐者", "intro": "啥都不懂，但每天挺开心的", "desc": "由于你的思维回路过于清奇，标准人格库已全面崩溃。你可能刚入学一周，也可能是已经看透一切的扫地僧。你 somehow 在科研圈里活得很好，虽然没人知道为什么。你可能是这个测试里最健康的人。" },
+      "OVERNIGHT": { "code": "OVERNIGHT", "cn": "通宵战神", "intro": "日出而作，日出而息", "desc": "你的生物钟是UTC+8的叛徒。太阳下山时你开始工作，太阳升起时你准备收工。你对实验室的夜间模式比白天更熟悉。你的最佳工作状态是凌晨3点到6点——当整个世界都睡着了，没人打扰你的flow。你已经忘记了阳光的味道，但你的productivity在深夜达到峰值。你不是在熬夜，你是在过美国时间。" }
+    };
+
+    const TYPE_IMAGES = {
+      "PHD": "./image/PHD.png", "POST": "./image/POST.png", "TENURE": "./image/TENURE.png", "AP": "./image/AP.png",
+      "MASTER": "./image/MASTER.png", "UG": "./image/UG.png", "GHOST": "./image/GHOST.png",
+      "CTRL": "./image/CTRL.png", "PAPER": "./image/PAPER.png", "DATA": "./image/DATA.png", "GRANT": "./image/GRANT.png",
+      "IDEA": "./image/IDEA.png", "CTRLV": "./image/CTRLV.png", "READ": "./image/READ.png", "CODE": "./image/CODE.png", "PPT": "./image/PPT.png",
+      "BOSS": "./image/BOSS.png", "SOLO": "./image/SOLO.png", "NET": "./image/NET.png", "REVIEW": "./image/REVIEW.png", "COAUTH": "./image/COAUTH.png",
+      "DEAD": "./image/DEAD.png", "HOPE": "./image/HOPE.png", "FOMO": "./image/FOMO.png", "BURN": "./image/BURN.png",
+      "HHHH": "./image/HHHH.png", "OVERNIGHT": "./image/OVERNIGHT.png"
+    };
+
+    const NORMAL_TYPES = [
+      { "code": "PHD", "pattern": "LLL-LML-MLL-LML-LML" }, { "code": "POST", "pattern": "LML-LLM-LML-MLL-LML" },
+      { "code": "TENURE", "pattern": "MML-MHL-HML-MHM-MHL" }, { "code": "AP", "pattern": "MHH-HMH-HHM-MHH-HHM" },
+      { "code": "MASTER", "pattern": "LLL-LLL-LLL-LLL-LLL" }, { "code": "UG", "pattern": "LML-LLL-MLL-LLL-LML" },
+      { "code": "GHOST", "pattern": "LMM-LML-MML-LMM-LLL" }, { "code": "CTRL", "pattern": "HMH-MHH-MHH-HMH-MHH" },
+      { "code": "PAPER", "pattern": "MHH-MHM-MHH-HHM-MHM" }, { "code": "DATA", "pattern": "MHL-MLH-MHL-MHL-MLM" },
+      { "code": "GRANT", "pattern": "MHM-MHH-HHM-MHH-HHM" }, { "code": "IDEA", "pattern": "MHL-MLH-LMH-MHL-MLH" },
+      { "code": "CTRLV", "pattern": "LLM-MLM-LMM-MLM-MLL" }, { "code": "READ", "pattern": "LML-LLM-MML-LLM-LML" },
+      { "code": "CODE", "pattern": "MLH-MLM-MHL-MHL-MLM" }, { "code": "PPT", "pattern": "MLM-MHM-MML-MHM-MHM" },
+      { "code": "BOSS", "pattern": "LMH-LMH-MHM-LMH-LHH" }, { "code": "SOLO", "pattern": "HHL-LHL-HLH-LHL-LHL" },
+      { "code": "NET", "pattern": "LHH-HHH-HLH-HHH-HHH" }, { "code": "REVIEW", "pattern": "HMH-HHM-HHM-HMH-MHM" },
+      { "code": "COAUTH", "pattern": "MLH-MHH-MHM-MHH-MHH" }, { "code": "DEAD", "pattern": "LLL-LLL-LLL-LLL-LLL" },
+      { "code": "HOPE", "pattern": "MML-MML-MML-MML-MML" }, { "code": "FOMO", "pattern": "LHL-LHL-MHL-LHL-LHL" },
+      { "code": "BURN", "pattern": "LML-LML-LLL-LML-LLM" }
+    ];
+
+    const DIM_EXPLANATIONS = {
+      "S1": { "L": "看别人的论文总觉得自己是废物，看自己的论文觉得审稿人是瞎子", "M": "自信随着影响因子波动，accept了觉得自己是天才，reject了怀疑人生", "H": "对自己工作大致有数，拒稿是审稿人没品味，accept是理所当然" },
+      "S2": { "L": "每天醒来都要问自己：我在干什么？我为什么要读博？", "M": "大概知道自己在做什么，但细节经常迷茫", "H": "五年规划精确到月，每一步都算得明明白白" },
+      "S3": { "L": "paper是什么？能吃吗？毕业还早，先躺为敬", "M": "偶尔会焦虑没成果，但还能自我调节", "H": "没有accept就睡不着觉，影响因子就是生命线" },
+      "E1": { "L": "收到reject邮件当场emo一周，需要导师 psychotherapy", "M": "难过但能快速恢复，改投就是", "H": "Reject是常态，改投下一家，内心毫无波动" },
+      "E2": { "L": "室友发Nature关我什么事，我继续我的", "M": "看到同学发好文章会有点慌", "H": "刷到朋友圈有人accept就焦虑到想退学" },
+      "E3": { "L": "DDL前一周开始焦虑，DDL当天通宵", "M": "DDL前三天进入工作状态", "H": "DDL是什么？我从来都是提前交" },
+      "A1": { "L": "先发了再说，严谨是审稿人的事", "M": "尽量做好，但也不会太纠结", "H": "宁可不发，也不能发有瑕疵的工作" },
+      "A2": { "L": "老板说要这样，但我偏要那样", "M": "该守的守，该变通的变通", "H": "严格按照protocol，偏差0.1都不行" },
+      "A3": { "L": "科研就是打工，别跟我谈理想", "M": "有时候觉得有意义，有时候觉得无聊", "H": "为了人类知识的边界！为了真理！" },
+      "Ac1": { "L": "避免失败：只要不reject就算成功", "M": "平衡型：既要accept也要不reject", "H": "追求成功：必须发顶刊，其他都是垃圾" },
+      "Ac2": { "L": "这个方向行不行？想了半年还没开始", "M": "想一周左右，收集信息后果断决定", "H": "看一眼就知道行不行，立刻动手" },
+      "Ac3": { "L": "拖延症晚期，DDL是第一生产力", "M": "有时候高效，有时候摆烂", "H": "每天工作12小时，效率机器" },
+      "So1": { "L": "Coffee break躲在角落，假装看手机", "M": "有人来聊就聊，没人来就算了", "H": "主动搭讪大佬，名片换到手软" },
+      "So2": { "L": "Author list随便加，大家都是朋友", "M": "合作可以，但贡献要明确", "H": "每句话都算得很清楚，别想占我便宜" },
+      "So3": { "L": "老板说什么都对，我只会说'好的好的'", "M": "大部分时候顺从，偶尔表达想法", "H": "老板你这个方法有问题，我数据不支持" }
+    };
+
+    const dimensionOrder = ['S1','S2','S3','E1','E2','E3','A1','A2','A3','Ac1','Ac2','Ac3','So1','So2','So3'];
+    const OVERNIGHT_TRIGGER_QUESTION_ID = 'overnight_gate_q2';
+
+    const app = { shuffledQuestions: [], answers: {}, previewMode: false };
+    const screens = { intro: document.getElementById('intro'), test: document.getElementById('test'), result: document.getElementById('result') };
+    const questionList = document.getElementById('questionList');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const submitBtn = document.getElementById('submitBtn');
+    const testHint = document.getElementById('testHint');
+
+    function showScreen(name) { Object.entries(screens).forEach(([key, el]) => { el.classList.toggle('active', key === name); }); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    function shuffle(array) { const arr = [...array]; for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
+    function getVisibleQuestions() { const visible = [...app.shuffledQuestions]; const gateIndex = visible.findIndex(q => q.id === 'overnight_gate_q1'); if (gateIndex !== -1 && app.answers['overnight_gate_q1'] === 3) { visible.splice(gateIndex + 1, 0, specialQuestions[1]); } return visible; }
+    function getQuestionMetaLabel(q) { if (q.special) return '补充题'; return app.previewMode ? dimensionMeta[q.dim].name : '维度已隐藏'; }
+
+    function renderQuestions() {
+      const visibleQuestions = getVisibleQuestions();
+      questionList.innerHTML = '';
+      visibleQuestions.forEach((q, index) => {
+        const card = document.createElement('article'); card.className = 'question';
+        card.innerHTML = `<div class="question-meta"><div class="badge">第 ${index + 1} 题</div><div>${getQuestionMetaLabel(q)}</div></div><div class="question-title">${q.text}</div><div class="options">${q.options.map((opt, i) => { const code = ['A', 'B', 'C', 'D'][i] || String(i + 1); const checked = app.answers[q.id] === opt.value ? 'checked' : ''; return `<label class="option"><input type="radio" name="${q.id}" value="${opt.value}" ${checked} /><div class="option-code">${code}</div><div>${opt.label}</div></label>`; }).join('')}</div>`;
+        questionList.appendChild(card);
+      });
+      questionList.querySelectorAll('input[type="radio"]').forEach(input => {
+        input.addEventListener('change', (e) => {
+          const { name, value } = e.target; app.answers[name] = Number(value);
+          if (name === 'overnight_gate_q1') { if (Number(value) !== 3) { delete app.answers['overnight_gate_q2']; } renderQuestions(); return; }
+          updateProgress();
+        });
+      });
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const visibleQuestions = getVisibleQuestions(); const total = visibleQuestions.length; const done = visibleQuestions.filter(q => app.answers[q.id] !== undefined).length;
+      const percent = total ? (done / total) * 100 : 0; progressBar.style.width = `${percent}%`; progressText.textContent = `${done} / ${total}`;
+      const complete = done === total && total > 0; submitBtn.disabled = !complete;
+      testHint.textContent = complete ? '都做完了。现在可以把你的学术魂魄交给结果页审判。' : '全选完才会放行。实验可以不做，测试必须做完。';
+    }
+
+    function sumToLevel(score) { if (score <= 3) return 'L'; if (score === 4) return 'M'; return 'H'; }
+    function levelNum(level) { return { L: 1, M: 2, H: 3 }[level]; }
+    function parsePattern(pattern) { return pattern.replace(/-/g, '').split(''); }
+    function getOvernightTriggered() { return app.answers[OVERNIGHT_TRIGGER_QUESTION_ID] === 3; }
+
+    function computeResult() {
+      const rawScores = {}; const levels = {}; Object.keys(dimensionMeta).forEach(dim => { rawScores[dim] = 0; });
+      questions.forEach(q => { rawScores[q.dim] += Number(app.answers[q.id] || 0); });
+      Object.entries(rawScores).forEach(([dim, score]) => { levels[dim] = sumToLevel(score); });
+      const userVector = dimensionOrder.map(dim => levelNum(levels[dim]));
+      const ranked = NORMAL_TYPES.map(type => {
+        const vector = parsePattern(type.pattern).map(levelNum); let distance = 0; let exact = 0;
+        for (let i = 0; i < vector.length; i++) { const diff = Math.abs(userVector[i] - vector[i]); distance += diff; if (diff === 0) exact += 1; }
+        const similarity = Math.max(0, Math.round((1 - distance / 30) * 100));
+        return { ...type, ...TYPE_LIBRARY[type.code], distance, exact, similarity };
+      }).sort((a, b) => { if (a.distance !== b.distance) return a.distance - b.distance; if (b.exact !== a.exact) return b.exact - a.exact; return b.similarity - a.similarity; });
+      const bestNormal = ranked[0]; const overnightTriggered = getOvernightTriggered();
+      let finalType, modeKicker, badge, sub, special = false, secondaryType = null;
+      if (overnightTriggered) {
+        finalType = TYPE_LIBRARY.OVERNIGHT; secondaryType = bestNormal; modeKicker = '隐藏人格已激活'; badge = '匹配度 100% · 咖啡因异常因子已接管'; sub = '睡眠严重不足，系统已直接跳过常规人格审判。'; special = true;
+      } else if (bestNormal.similarity < 60) {
+        finalType = TYPE_LIBRARY.HHHH; modeKicker = '系统强制兜底'; badge = `标准人格库最高匹配仅 ${bestNormal.similarity}%`; sub = '标准人格库对你的脑回路集体罢工了，于是系统把你强制分配给了 HHHH。'; special = true;
+      } else { finalType = bestNormal; modeKicker = '你的主类型'; badge = `匹配度 ${bestNormal.similarity}% · 精准命中 ${bestNormal.exact}/15 维`; sub = '维度命中度较高，当前结果可视为你的第一人格画像。'; }
+      return { rawScores, levels, ranked, bestNormal, finalType, modeKicker, badge, sub, special, secondaryType };
+    }
+
+    function renderDimList(result) {
+      const dimList = document.getElementById('dimList');
+      dimList.innerHTML = dimensionOrder.map(dim => {
+        const level = result.levels[dim]; const explanation = DIM_EXPLANATIONS[dim][level];
+        return `<div class="dim-item"><div class="dim-item-top"><div class="dim-item-name">${dimensionMeta[dim].name}</div><div class="dim-item-score">${level} / ${result.rawScores[dim]}分</div></div><p>${explanation}</p></div>`;
+      }).join('');
+    }
+
+    function renderResult() {
+      const result = computeResult(); const type = result.finalType;
+      document.getElementById('resultModeKicker').textContent = result.modeKicker;
+      document.getElementById('resultTypeName').textContent = `${type.code}（${type.cn}）`;
+      document.getElementById('matchBadge').textContent = result.badge;
+      document.getElementById('resultTypeSub').textContent = result.sub;
+      document.getElementById('resultDesc').textContent = type.desc;
+      document.getElementById('posterCaption').textContent = type.intro;
+      document.getElementById('funNote').textContent = result.special ? '本测试仅供娱乐。隐藏人格和傻乐兜底都属于作者故意埋的损招，请勿把它当成医学、心理学、相学、命理学或灵异学依据。' : '本测试仅供娱乐，别拿它当申博、评职称、找教职或分手的依据。你可以笑，但别太当真。';
+      const posterBox = document.getElementById('posterBox'); const posterImage = document.getElementById('posterImage'); const imageSrc = TYPE_IMAGES[type.code];
+      if (imageSrc) { posterImage.src = imageSrc; posterImage.alt = `${type.code}（${type.cn}）`; posterBox.classList.remove('no-image'); }
+      else { posterImage.removeAttribute('src'); posterImage.alt = ''; posterBox.classList.add('no-image'); }
+      renderDimList(result); showScreen('result');
+    }
+
+    function startTest(preview = false) {
+      app.previewMode = preview; app.answers = {};
+      const shuffledRegular = shuffle(questions); const insertIndex = Math.floor(Math.random() * shuffledRegular.length) + 1;
+      app.shuffledQuestions = [...shuffledRegular.slice(0, insertIndex), specialQuestions[0], ...shuffledRegular.slice(insertIndex)];
+      renderQuestions(); showScreen('test');
+    }
+
+    document.getElementById('startBtn').addEventListener('click', () => startTest(false));
+    document.getElementById('backIntroBtn').addEventListener('click', () => showScreen('intro'));
+    document.getElementById('submitBtn').addEventListener('click', renderResult);
+    document.getElementById('restartBtn').addEventListener('click', () => startTest(false));
+    document.getElementById('toTopBtn').addEventListener('click', () => showScreen('intro'));
+  </script>
+</body>
+</html>
