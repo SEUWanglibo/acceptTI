@@ -2,6 +2,8 @@
 
 基于 SBTI 改编的科研版人格测试，专为学术从业者设计。
 
+**在线访问**: https://accept-ti.pages.dev/
+
 ## 什么是 acceptTI
 
 acceptTI (Academic Character Research Type Indicator) 是一个娱乐性质的科研人格测试：
